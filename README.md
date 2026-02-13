@@ -1,6 +1,6 @@
 # QuickGit - 萌芽一键Git管理工具
 
-一个简单易用的Git命令行管理工具，让Git操作更加便捷高效。
+一个简单易用的模块化Git命令行管理工具，让Git操作更加便捷高效。
 
 ## 功能特性
 
@@ -10,12 +10,33 @@
 - **远程仓库管理** - 便捷地添加、删除、查看远程仓库
 - **状态查看** - 快速查看仓库状态和提交历史
 - **彩色界面** - 友好的彩色控制台输出
+- **模块化设计** - 易于维护和扩展
+
+## 项目结构
+
+```
+QuickGit/
+├── quickgit/              # 核心模块
+│   ├── __init__.py       # 包初始化
+│   ├── config.py         # 配置模块
+│   ├── utils.py          # 工具类（命令执行、输出格式化、输入验证）
+│   ├── git_operations.py # Git操作模块
+│   ├── remote_manager.py # 远程仓库管理模块
+│   └── ui.py            # UI交互模块
+├── quickgit.py          # 主程序入口
+├── mengya_git_manager.py # 旧版单文件脚本（兼容保留）
+└── README.md            # 项目文档
+```
 
 ## 快速开始
 
 ### 运行脚本
 
 ```bash
+# 使用新版模块化脚本（推荐）
+python quickgit.py
+
+# 或使用旧版单文件脚本
 python mengya_git_manager.py
 ```
 
@@ -103,12 +124,40 @@ A: 使用 `5. 管理远程仓库` 功能添加或删除远程仓库
 **Q: 支持哪些Git操作？**  
 A: 目前支持init、add、commit、push、pull等常用操作
 
+## 模块说明
+
+### config.py - 配置模块
+存储所有配置信息，包括Gitea服务器地址、GitHub用户名、.gitignore模板等。
+
+### utils.py - 工具类模块
+- `Colors`: 控制台颜色定义
+- `CommandExecutor`: 命令执行器
+- `OutputFormatter`: 输出格式化器
+- `InputValidator`: 输入验证器
+
+### git_operations.py - Git操作模块
+提供Git基本操作功能：
+- 初始化仓库
+- 检查状态
+- 添加/提交更改
+- 推送/拉取代码
+
+### remote_manager.py - 远程仓库管理模块
+管理GitHub和Gitea远程仓库：
+- 添加/删除远程仓库
+- 查看远程仓库列表
+- 选择推送/拉取目标
+
+### ui.py - UI交互模块
+处理用户界面和交互逻辑，整合所有功能模块。
+
 ## 开发计划
 
+- [x] 模块化架构重构
 - [ ] 支持分支管理
 - [ ] 支持标签管理
 - [ ] 支持冲突解决辅助
-- [ ] 支持配置文件
+- [ ] 支持自定义配置文件
 - [ ] 支持批量操作多个仓库
 
 ## 许可证
