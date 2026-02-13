@@ -2,7 +2,9 @@
 工具类模块 - 提供命令执行、输出格式化等工具函数
 """
 
+import os
 import subprocess
+import sys
 
 
 class Colors:
@@ -158,6 +160,47 @@ class OutputFormatter:
         }
         icon = icons.get(status_type, "[·]")
         print(f"{icon} {text}")
+
+
+class PlatformUtils:
+    """跨平台工具类"""
+    
+    @staticmethod
+    def clear_screen():
+        """清屏 - 跨平台兼容"""
+        # Windows
+        if os.name == 'nt':
+            os.system('cls')
+        # Linux/macOS
+        else:
+            os.system('clear')
+    
+    @staticmethod
+    def is_windows() -> bool:
+        """检查是否为 Windows 系统"""
+        return os.name == 'nt'
+    
+    @staticmethod
+    def is_linux() -> bool:
+        """检查是否为 Linux 系统"""
+        return sys.platform.startswith('linux')
+    
+    @staticmethod
+    def is_mac() -> bool:
+        """检查是否为 macOS 系统"""
+        return sys.platform == 'darwin'
+    
+    @staticmethod
+    def get_platform_name() -> str:
+        """获取平台名称"""
+        if PlatformUtils.is_windows():
+            return "Windows"
+        elif PlatformUtils.is_linux():
+            return "Linux"
+        elif PlatformUtils.is_mac():
+            return "macOS"
+        else:
+            return "Unknown"
 
 
 class InputValidator:

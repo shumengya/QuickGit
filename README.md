@@ -11,6 +11,7 @@
 - **状态查看** - 快速查看仓库状态和提交历史
 - **彩色界面** - 友好的彩色控制台输出
 - **模块化设计** - 易于维护和扩展
+- **跨平台支持** - 完美兼容 Windows、Linux、macOS
 
 ## 项目结构
 
@@ -19,11 +20,13 @@ QuickGit/
 ├── quickgit/              # 核心模块
 │   ├── __init__.py       # 包初始化
 │   ├── config.py         # 配置模块
-│   ├── utils.py          # 工具类（命令执行、输出格式化、输入验证）
+│   ├── utils.py          # 工具类（命令执行、输出格式化、输入验证、平台工具）
 │   ├── git_operations.py # Git操作模块
 │   ├── remote_manager.py # 远程仓库管理模块
 │   └── ui.py            # UI交互模块
 ├── quickgit.py          # 主程序入口
+├── run.bat              # Windows启动脚本
+├── run.sh               # Linux/macOS启动脚本
 ├── mengya_git_manager.py # 旧版单文件脚本（兼容保留）
 └── README.md            # 项目文档
 ```
@@ -32,8 +35,30 @@ QuickGit/
 
 ### 运行脚本
 
+**Windows:**
 ```bash
-# 使用新版模块化脚本（推荐）
+# 使用启动脚本（自动设置UTF-8编码）
+run.bat
+
+# 或直接运行
+python quickgit.py
+```
+
+**Linux/macOS:**
+```bash
+# 首次使用需要添加执行权限
+chmod +x run.sh
+
+# 使用启动脚本（推荐）
+./run.sh
+
+# 或直接运行
+python3 quickgit.py
+```
+
+**通用方式:**
+```bash
+# 新版模块化脚本（推荐）
 python quickgit.py
 
 # 或使用旧版单文件脚本
@@ -97,9 +122,21 @@ python mengya_git_manager.py
 
 ## 系统要求
 
-- Python 3.6+
-- Git 已安装并配置
-- SSH密钥已配置（用于远程仓库推送）
+- **Python:** 3.6+ (Linux/macOS 使用 python3)
+- **Git:** 已安装并配置
+- **SSH密钥:** 已配置（用于远程仓库推送）
+- **操作系统:** Windows、Linux、macOS 均支持
+
+### 平台特定说明
+
+**Windows:**
+- 建议使用 `run.bat` 启动，自动配置UTF-8编码
+- 控制台需支持ANSI颜色代码（Windows 10+自带支持）
+
+**Linux/macOS:**
+- 使用 `python3` 命令运行
+- 确保终端支持UTF-8编码和颜色显示
+- 首次使用 `run.sh` 需要添加执行权限：`chmod +x run.sh`
 
 ## 注意事项
 
@@ -134,6 +171,7 @@ A: 目前支持init、add、commit、push、pull等常用操作
 - `CommandExecutor`: 命令执行器
 - `OutputFormatter`: 输出格式化器
 - `InputValidator`: 输入验证器
+- `PlatformUtils`: 跨平台工具（清屏、平台检测）
 
 ### git_operations.py - Git操作模块
 提供Git基本操作功能：
