@@ -16,19 +16,33 @@ class GitManagerUI:
     
     def show_welcome(self):
         """显示欢迎信息"""
-        OutputFormatter.header("萌芽一键Git管理工具 - QuickGit")
-        print(f"{Colors.CYAN}当前目录:{Colors.ENDC} {self.git_ops.current_dir}")
-        print(f"{Colors.CYAN}Git仓库:{Colors.ENDC} {'是' if self.git_ops.is_git_repo() else '否'}")
+        from .utils import Colors
+        
+        # 简洁的标题
+        print(f"\n{Colors.BRIGHT_CYAN}{'=' * 60}")
+        print(f"{Colors.BRIGHT_MAGENTA}{Colors.BOLD}   QuickGit - 萌芽一键Git管理工具 v1.0{Colors.ENDC}")
+        print(f"{Colors.BRIGHT_CYAN}{'=' * 60}{Colors.ENDC}")
+        
+        # 显示当前状态
+        is_repo = self.git_ops.is_git_repo()
+        repo_status = f"{Colors.BRIGHT_GREEN}[已初始化]{Colors.ENDC}" if is_repo else f"{Colors.BRIGHT_RED}[未初始化]{Colors.ENDC}"
+        
+        print(f"{Colors.BRIGHT_YELLOW}当前目录:{Colors.ENDC} {Colors.WHITE}{self.git_ops.current_dir}{Colors.ENDC}")
+        print(f"{Colors.BRIGHT_YELLOW}Git状态:{Colors.ENDC} {repo_status}")
+        print(f"{Colors.CYAN}{'-' * 60}{Colors.ENDC}")
     
     def show_main_menu(self):
         """显示主菜单"""
-        print(f"\n{Colors.BOLD}请选择操作：{Colors.ENDC}")
-        print("1. 初始化Git仓库")
-        print("2. 提交并推送更改")
-        print("3. 从远程仓库拉取")
-        print("4. 查看仓库状态")
-        print("5. 管理远程仓库")
-        print("6. 退出")
+        print(f"\n{Colors.BRIGHT_MAGENTA}{Colors.BOLD}>> 主菜单{Colors.ENDC}")
+        print(f"{Colors.CYAN}{'-' * 60}{Colors.ENDC}")
+        
+        OutputFormatter.menu_item(1, "初始化Git仓库")
+        OutputFormatter.menu_item(2, "提交并推送更改")
+        OutputFormatter.menu_item(3, "从远程仓库拉取")
+        OutputFormatter.menu_item(4, "查看仓库状态")
+        OutputFormatter.menu_item(5, "管理远程仓库")
+        OutputFormatter.menu_item(6, "退出程序")
+        print(f"{Colors.CYAN}{'-' * 60}{Colors.ENDC}")
     
     def handle_init_repo(self):
         """处理初始化仓库"""
@@ -47,20 +61,21 @@ class GitManagerUI:
             return
         
         # 检查是否有更改
-        OutputFormatter.info("检查文件更改...")
+        OutputFormatter.status('running', "检查文件更改中...")
         
         if not self.git_ops.has_changes():
             OutputFormatter.warning("没有文件更改，无需提交")
             return
         
         # 显示更改
-        print("\n当前更改的文件：")
+        print(f"\n{Colors.BRIGHT_YELLOW}>> 当前更改的文件：{Colors.ENDC}")
         _, status = self.git_ops.get_status()
-        print(status)
+        print(f"{Colors.CYAN}{status}{Colors.ENDC}")
+        print(f"{Colors.CYAN}{'-' * 60}{Colors.ENDC}")
         
         # 输入提交信息
         commit_msg = InputValidator.get_input(
-            "\n请输入提交信息 (直接回车使用默认信息): ",
+            f"{Colors.BRIGHT_CYAN}>> 请输入提交信息 (回车使用默认): {Colors.ENDC}",
             allow_empty=True
         )
         
@@ -68,7 +83,7 @@ class GitManagerUI:
         if not self.git_ops.add_all():
             return
         
-        if not self.git_ops.commit(commit_msg if commit_msg else None):
+        if not self.git_ops.commit(commit_msg or ""):
             return
         
         # 推送到远程仓库
@@ -111,14 +126,20 @@ class GitManagerUI:
             return
         
         while True:
-            print("\n远程仓库管理：")
-            print("1. 查看远程仓库")
-            print("2. 添加GitHub远程仓库")
-            print("3. 添加Gitea远程仓库")
-            print("4. 删除远程仓库")
-            print("5. 返回主菜单")
+            print(f"\n{Colors.BRIGHT_BLUE}{Colors.BOLD}>> 远程仓库管理{Colors.ENDC}")
+            print(f"{Colors.CYAN}{'-' * 60}{Colors.ENDC}")
             
-            choice = InputValidator.get_choice("\n请选择 [1-5]: ", range(1, 6))
+            OutputFormatter.menu_item(1, "查看远程仓库")
+            OutputFormatter.menu_item(2, "添加GitHub远程仓库")
+            OutputFormatter.menu_item(3, "添加Gitea远程仓库")
+            OutputFormatter.menu_item(4, "删除远程仓库")
+            OutputFormatter.menu_item(5, "返回主菜单")
+            print(f"{Colors.CYAN}{'-' * 60}{Colors.ENDC}")
+            
+            choice = InputValidator.get_choice(
+                f"{Colors.BRIGHT_CYAN}>> 请选择 [1-5]: {Colors.ENDC}",
+                range(1, 6)
+            )
             
             if choice == 1:
                 self.remote_mgr.show_remotes()
@@ -139,7 +160,7 @@ class GitManagerUI:
             self.show_main_menu()
             
             choice = InputValidator.get_choice(
-                f"\n{Colors.BOLD}请输入选项 [1-6]: {Colors.ENDC}",
+                f"{Colors.BRIGHT_MAGENTA}>> 请输入选项 [1-6]: {Colors.ENDC}",
                 range(1, 7)
             )
             
@@ -154,5 +175,7 @@ class GitManagerUI:
             elif choice == 5:
                 self.handle_manage_remotes()
             elif choice == 6:
-                OutputFormatter.success("感谢使用萌芽Git管理工具！")
+                print(f"\n{Colors.BRIGHT_GREEN}{'=' * 60}")
+                print(f"{Colors.BRIGHT_GREEN}{Colors.BOLD}   感谢使用QuickGit！祝您工作愉快！{Colors.ENDC}")
+                print(f"{Colors.BRIGHT_GREEN}{'=' * 60}{Colors.ENDC}\n")
                 break

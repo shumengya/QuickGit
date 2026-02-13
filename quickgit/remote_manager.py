@@ -27,42 +27,46 @@ class RemoteManager:
     def show_remotes(self):
         """显示所有远程仓库"""
         from .utils import Colors
-        print(f"\n{Colors.CYAN}远程仓库：{Colors.ENDC}")
+        print(f"{Colors.CYAN}{'-' * 60}{Colors.ENDC}")
+        print(f"{Colors.BRIGHT_CYAN}>> 远程仓库列表：{Colors.ENDC}")
         self.executor.run("git remote -v", show_output=True)
+        print(f"{Colors.CYAN}{'-' * 60}{Colors.ENDC}")
     
-    def add_github_remote(self, repo_name: str = None) -> bool:
+    def add_github_remote(self, repo_name: str = "") -> bool:
         """
         添加GitHub远程仓库
         
         Args:
-            repo_name: 仓库名（如果为None则提示用户输入）
+            repo_name: 仓库名（如果为空则提示用户输入）
             
         Returns:
             是否成功
         """
         if not repo_name:
-            repo_name = InputValidator.get_input("\n请输入GitHub仓库名: ")
+            from .utils import Colors
+            repo_name = InputValidator.get_input(f"{Colors.BRIGHT_CYAN}>> 请输入GitHub仓库名: {Colors.ENDC}")
         
         remote_url = f"git@github.com:{Config.GITHUB_USER}/{repo_name}.git"
         
         return self._add_remote("github", remote_url)
     
-    def add_gitea_remote(self, user: str = None, repo_name: str = None) -> bool:
+    def add_gitea_remote(self, user: str = "", repo_name: str = "") -> bool:
         """
         添加Gitea远程仓库
         
         Args:
-            user: Gitea用户名（如果为None则提示用户输入）
-            repo_name: 仓库名（如果为None则提示用户输入）
+            user: Gitea用户名（如果为空则提示用户输入）
+            repo_name: 仓库名（如果为空则提示用户输入）
             
         Returns:
             是否成功
         """
+        from .utils import Colors
         if not user:
-            user = InputValidator.get_input("\n请输入Gitea用户名: ")
+            user = InputValidator.get_input(f"{Colors.BRIGHT_CYAN}>> 请输入Gitea用户名: {Colors.ENDC}")
         
         if not repo_name:
-            repo_name = InputValidator.get_input("请输入Gitea仓库名: ")
+            repo_name = InputValidator.get_input(f"{Colors.BRIGHT_CYAN}>> 请输入Gitea仓库名: {Colors.ENDC}")
         
         remote_url = f"ssh://git@{Config.GITEA_HOST}:{Config.GITEA_PORT}/{user}/{repo_name}.git"
         
@@ -95,16 +99,17 @@ class RemoteManager:
         
         return success
     
-    def remove_remote(self, name: str = None) -> bool:
+    def remove_remote(self, name: str = "") -> bool:
         """
         删除远程仓库
         
         Args:
-            name: 远程仓库名（如果为None则提示用户选择）
+            name: 远程仓库名（如果为空则提示用户选择）
             
         Returns:
             是否成功
         """
+        from .utils import Colors
         remotes = self.get_remotes()
         
         if not remotes:
@@ -113,12 +118,14 @@ class RemoteManager:
         
         if not name:
             # 让用户选择要删除的远程仓库
-            print("\n当前远程仓库：")
+            print(f"{Colors.CYAN}{'-' * 60}{Colors.ENDC}")
+            print(f"{Colors.BRIGHT_YELLOW}>> 当前远程仓库：{Colors.ENDC}")
             for idx, remote in enumerate(remotes, 1):
-                print(f"{idx}. {remote}")
+                OutputFormatter.menu_item(idx, remote)
+            print(f"{Colors.CYAN}{'-' * 60}{Colors.ENDC}")
             
             choice = InputValidator.get_choice(
-                f"\n请选择要删除的远程仓库 [1-{len(remotes)}]: ",
+                f"{Colors.BRIGHT_CYAN}>> 请选择要删除的远程仓库 [1-{len(remotes)}]: {Colors.ENDC}",
                 range(1, len(remotes) + 1)
             )
             
@@ -137,15 +144,20 @@ class RemoteManager:
     
     def configure_remotes_interactive(self):
         """交互式配置远程仓库"""
-        OutputFormatter.info("\n配置远程仓库...")
+        from .utils import Colors
+        print(f"\n{Colors.BRIGHT_MAGENTA}>> 配置远程仓库{Colors.ENDC}")
+        print(f"{Colors.CYAN}{'-' * 60}{Colors.ENDC}")
         
-        print("\n请选择要配置的远程仓库：")
-        print("1. GitHub")
-        print("2. Gitea")
-        print("3. 两者都配置")
-        print("4. 跳过")
+        OutputFormatter.menu_item(1, "GitHub")
+        OutputFormatter.menu_item(2, "Gitea")
+        OutputFormatter.menu_item(3, "两者都配置")
+        OutputFormatter.menu_item(4, "跳过")
+        print(f"{Colors.CYAN}{'-' * 60}{Colors.ENDC}")
         
-        choice = InputValidator.get_choice("\n请选择 [1-4]: ", range(1, 5))
+        choice = InputValidator.get_choice(
+            f"{Colors.BRIGHT_CYAN}>> 请选择 [1-4]: {Colors.ENDC}",
+            range(1, 5)
+        )
         
         if choice == 1:
             self.add_github_remote()
@@ -164,19 +176,22 @@ class RemoteManager:
         Returns:
             选中的远程仓库列表
         """
+        from .utils import Colors
         remotes = self.get_remotes()
         
         if not remotes:
             OutputFormatter.warning("没有配置远程仓库")
             return []
         
-        print("\n可用的远程仓库：")
+        print(f"\n{Colors.BRIGHT_YELLOW}>> 可用的远程仓库：{Colors.ENDC}")
+        print(f"{Colors.CYAN}{'-' * 60}{Colors.ENDC}")
         for idx, remote in enumerate(remotes, 1):
-            print(f"{idx}. {remote}")
-        print(f"{len(remotes) + 1}. 全部推送")
+            OutputFormatter.menu_item(idx, remote)
+        OutputFormatter.menu_item(len(remotes) + 1, "全部推送")
+        print(f"{Colors.CYAN}{'-' * 60}{Colors.ENDC}")
         
         choice = InputValidator.get_choice(
-            f"\n请选择要推送的远程仓库 [1-{len(remotes) + 1}]: ",
+            f"{Colors.BRIGHT_CYAN}>> 请选择 [1-{len(remotes) + 1}]: {Colors.ENDC}",
             range(1, len(remotes) + 2)
         )
         
@@ -190,17 +205,27 @@ class RemoteManager:
         选择要拉取的远程仓库
         
         Returns:
-            选中的远程仓库名
+            选中的远程仓库名，如果没有配置则返回空字符串
         """
+        from .utils import Colors
         remotes = self.get_remotes()
         
         if not remotes:
             OutputFormatter.warning("没有配置远程仓库")
-            return None
+            return ""
         
-        print("\n可用的远程仓库：")
+        print(f"\n{Colors.BRIGHT_YELLOW}>> 可用的远程仓库：{Colors.ENDC}")
+        print(f"{Colors.CYAN}{'-' * 60}{Colors.ENDC}")
         for idx, remote in enumerate(remotes, 1):
-            print(f"{idx}. {remote}")
+            OutputFormatter.menu_item(idx, remote)
+        print(f"{Colors.CYAN}{'-' * 60}{Colors.ENDC}")
+        
+        choice = InputValidator.get_choice(
+            f"{Colors.BRIGHT_CYAN}>> 请选择 [1-{len(remotes)}]: {Colors.ENDC}",
+            range(1, len(remotes) + 1)
+        )
+        
+        return remotes[choice - 1]
         
         choice = InputValidator.get_choice(
             f"\n请选择要拉取的远程仓库 [1-{len(remotes)}]: ",

@@ -7,14 +7,41 @@ import subprocess
 
 class Colors:
     """控制台颜色"""
-    HEADER = '\033[95m'
-    BLUE = '\033[94m'
-    CYAN = '\033[96m'
-    GREEN = '\033[92m'
+    # 基础颜色
+    HEADER = '\033[95m'      # 紫色
+    BLUE = '\033[94m'        # 蓝色
+    CYAN = '\033[96m'        # 青色
+    GREEN = '\033[92m'       # 绿色
+    YELLOW = '\033[93m'      # 黄色
+    RED = '\033[91m'         # 红色
+    MAGENTA = '\033[35m'     # 品红
+    WHITE = '\033[97m'       # 白色
+    
+    # 亮色系
+    BRIGHT_CYAN = '\033[96m\033[1m'    # 亮青色
+    BRIGHT_GREEN = '\033[92m\033[1m'   # 亮绿色
+    BRIGHT_YELLOW = '\033[93m\033[1m'  # 亮黄色
+    BRIGHT_RED = '\033[91m\033[1m'     # 亮红色
+    BRIGHT_BLUE = '\033[94m\033[1m'    # 亮蓝色
+    BRIGHT_MAGENTA = '\033[95m\033[1m' # 亮品红
+    
+    # 背景色
+    BG_BLUE = '\033[44m'
+    BG_GREEN = '\033[42m'
+    BG_YELLOW = '\033[43m'
+    BG_RED = '\033[41m'
+    BG_CYAN = '\033[46m'
+    BG_MAGENTA = '\033[45m'
+    
+    # 样式
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
+    REVERSE = '\033[7m'
+    ENDC = '\033[0m'
+    
+    # 兼容旧代码
     WARNING = '\033[93m'
     FAIL = '\033[91m'
-    ENDC = '\033[0m'
-    BOLD = '\033[1m'
 
 
 class CommandExecutor:
@@ -58,30 +85,79 @@ class OutputFormatter:
     
     @staticmethod
     def header(text: str):
-        """打印标题"""
-        print(f"\n{Colors.HEADER}{Colors.BOLD}{'='*50}")
-        print(f"  {text}")
-        print(f"{'='*50}{Colors.ENDC}\n")
+        """打印标题 - 顶部大标题"""
+        line = "=" * 60
+        print(f"\n{Colors.BRIGHT_CYAN}{line}")
+        print(f"{Colors.BRIGHT_MAGENTA}{Colors.BOLD}>> {text}")
+        print(f"{Colors.BRIGHT_CYAN}{line}{Colors.ENDC}")
+    
+    @staticmethod
+    def section(text: str):
+        """打印分节标题"""
+        print(f"\n{Colors.BRIGHT_YELLOW}{'=' * 60}")
+        print(f"{Colors.BRIGHT_BLUE}{Colors.BOLD}>> {text}")
+        print(f"{Colors.BRIGHT_YELLOW}{'=' * 60}{Colors.ENDC}")
+    
+    @staticmethod
+    def divider():
+        """打印分割线"""
+        print(f"{Colors.CYAN}{'-' * 60}{Colors.ENDC}")
+    
+    @staticmethod
+    def thin_divider():
+        """打印细分割线"""
+        print(f"{Colors.CYAN}{'·' * 60}{Colors.ENDC}")
     
     @staticmethod
     def success(text: str):
         """打印成功信息"""
-        print(f"{Colors.GREEN}✓ {text}{Colors.ENDC}")
+        print(f"{Colors.BRIGHT_GREEN}[√]{Colors.ENDC} {Colors.GREEN}{text}{Colors.ENDC}")
     
     @staticmethod
     def error(text: str):
         """打印错误信息"""
-        print(f"{Colors.FAIL}✗ {text}{Colors.ENDC}")
+        print(f"{Colors.BRIGHT_RED}[×]{Colors.ENDC} {Colors.RED}{text}{Colors.ENDC}")
     
     @staticmethod
     def info(text: str):
         """打印提示信息"""
-        print(f"{Colors.CYAN}ℹ {text}{Colors.ENDC}")
+        print(f"{Colors.BRIGHT_CYAN}[i]{Colors.ENDC} {Colors.CYAN}{text}{Colors.ENDC}")
     
     @staticmethod
     def warning(text: str):
         """打印警告信息"""
-        print(f"{Colors.WARNING}⚠ {text}{Colors.ENDC}")
+        print(f"{Colors.BRIGHT_YELLOW}[!]{Colors.ENDC} {Colors.YELLOW}{text}{Colors.ENDC}")
+    
+    @staticmethod
+    def step(num: int, text: str):
+        """打印步骤信息"""
+        print(f"{Colors.BRIGHT_BLUE}[{num}]{Colors.ENDC} {Colors.WHITE}{text}{Colors.ENDC}")
+    
+    @staticmethod
+    def menu_item(num: int, text: str, icon: str = ">>"):
+        """打印菜单项"""
+        print(f"{Colors.BRIGHT_CYAN}[{num}]{Colors.ENDC} {Colors.WHITE}{text}{Colors.ENDC}")
+    
+    @staticmethod
+    def key_value(key: str, value: str, key_color=None, value_color=None):
+        """打印键值对"""
+        if key_color is None:
+            key_color = Colors.BRIGHT_CYAN
+        if value_color is None:
+            value_color = Colors.WHITE
+        print(f"{key_color}{key}:{Colors.ENDC} {value_color}{value}{Colors.ENDC}")
+    
+    @staticmethod
+    def status(status_type: str, text: str):
+        """打印状态信息"""
+        icons = {
+            'pending': f"{Colors.YELLOW}[·]{Colors.ENDC}",
+            'running': f"{Colors.BRIGHT_CYAN}[>]{Colors.ENDC}",
+            'success': f"{Colors.BRIGHT_GREEN}[√]{Colors.ENDC}",
+            'error': f"{Colors.BRIGHT_RED}[×]{Colors.ENDC}",
+        }
+        icon = icons.get(status_type, "[·]")
+        print(f"{icon} {text}")
 
 
 class InputValidator:
