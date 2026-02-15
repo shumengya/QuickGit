@@ -85,12 +85,18 @@ quickgit/
 ├── __init__.py          # Package init (empty)
 ├── config.py            # Configuration constants
 ├── utils.py             # Utilities (Colors, CommandExecutor, OutputFormatter, InputValidator, PlatformUtils)
-├── git_operations.py    # Git command wrapper
+├── git_operations.py    # Git command wrapper (supports custom work directory)
 ├── remote_manager.py    # Remote repository management
 └── ui.py                # User interface and menu system
 ```
 
 **Principle:** Each module has a single, well-defined responsibility.
+
+### Key Features
+
+1. **Flexible Directory Management**: Users can select any directory to manage at startup
+2. **Cross-platform Path Handling**: Automatic path normalization for Windows/Linux/macOS
+3. **Directory Validation**: Real-time validation of user-provided paths
 
 ### Import Conventions
 

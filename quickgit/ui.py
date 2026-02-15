@@ -2,17 +2,70 @@
 UI交互模块 - 处理用户界面和交互逻辑
 """
 
+import os
 from .git_operations import GitOperations
 from .remote_manager import RemoteManager
-from .utils import OutputFormatter, InputValidator, Colors
+from .utils import OutputFormatter, InputValidator, Colors, PlatformUtils
 
 
 class GitManagerUI:
     """Git管理器UI"""
     
-    def __init__(self):
-        self.git_ops = GitOperations()
+    def __init__(self, work_dir: str = ""):
+        """
+        初始化UI
+        
+        Args:
+            work_dir: 工作目录（默认为当前目录）
+        """
+        self.git_ops = GitOperations(work_dir)
         self.remote_mgr = RemoteManager()
+    
+    def select_work_directory(self):
+        """让用户选择工作目录"""
+        from .utils import Colors
+        
+        print(f"\n{Colors.BRIGHT_CYAN}{'=' * 60}")
+        print(f"{Colors.BRIGHT_MAGENTA}{Colors.BOLD}   QuickGit - 萌芽一键Git管理工具 v1.0{Colors.ENDC}")
+        print(f"{Colors.BRIGHT_CYAN}{'=' * 60}{Colors.ENDC}")
+        
+        # 获取当前目录
+        current_dir = os.getcwd()
+        
+        # 显示平台信息和路径示例
+        platform = PlatformUtils.get_platform_name()
+        print(f"{Colors.BRIGHT_YELLOW}当前平台:{Colors.ENDC} {Colors.WHITE}{platform}{Colors.ENDC}")
+        print(f"{Colors.BRIGHT_YELLOW}脚本目录:{Colors.ENDC} {Colors.WHITE}{current_dir}{Colors.ENDC}")
+        print(f"{Colors.CYAN}{'-' * 60}{Colors.ENDC}")
+        
+        # 显示路径输入提示
+        OutputFormatter.info("请输入要管理的Git仓库目录")
+        
+        # 根据平台显示不同的示例
+        if PlatformUtils.is_windows():
+            OutputFormatter.tip("Windows路径示例: C:\\Users\\YourName\\project")
+            OutputFormatter.tip("或使用相对路径: .\\myproject")
+        else:
+            OutputFormatter.tip("Linux/macOS路径示例: /home/yourname/project")
+            OutputFormatter.tip("或使用相对路径: ./myproject 或 ~/project")
+        
+        print(f"{Colors.CYAN}{'-' * 60}{Colors.ENDC}")
+        
+        # 获取用户输入的目录
+        work_dir = InputValidator.get_directory(
+            f"{Colors.BRIGHT_CYAN}>> 请输入目录路径{Colors.ENDC}",
+            default=current_dir
+        )
+        
+        # 切换到工作目录
+        try:
+            self.git_ops.change_directory(work_dir)
+            OutputFormatter.success(f"已切换到工作目录: {work_dir}")
+        except Exception as e:
+            OutputFormatter.error(f"切换目录失败: {str(e)}")
+            return False
+        
+        return True
     
     def show_welcome(self):
         """显示欢迎信息"""
@@ -43,6 +96,11 @@ class GitManagerUI:
         OutputFormatter.menu_item(5, "管理远程仓库")
         OutputFormatter.menu_item(6, "退出程序")
         print(f"{Colors.CYAN}{'-' * 60}{Colors.ENDC}")
+        
+        # 显示永久提示
+        OutputFormatter.tip("提交代码前建议先拉取最新代码，减少代码冲突")
+        OutputFormatter.tip("使用SSH进行Git提交更方便快捷和安全")
+        print(f"{Colors.CYAN}{'-' * 60}{Colors.ENDC}")
     
     def handle_init_repo(self):
         """处理初始化仓库"""
@@ -59,10 +117,6 @@ class GitManagerUI:
         if not self.git_ops.is_git_repo():
             OutputFormatter.error("当前目录不是Git仓库，请先初始化")
             return
-        
-        # 提示：先拉取再提交
-        OutputFormatter.tip("建议先拉取最新代码再提交，减少代码冲突")
-        print(f"{Colors.CYAN}{'-' * 60}{Colors.ENDC}")
         
         # 检查是否有更改
         OutputFormatter.status('running', "检查文件更改中...")
@@ -158,6 +212,11 @@ class GitManagerUI:
     
     def run(self):
         """运行主程序"""
+        # 首先选择工作目录
+        if not self.select_work_directory():
+            return
+        
+        # 显示欢迎信息
         self.show_welcome()
         
         while True:

@@ -206,6 +206,42 @@ class PlatformUtils:
             return "macOS"
         else:
             return "Unknown"
+    
+    @staticmethod
+    def normalize_path(path: str) -> str:
+        """
+        标准化路径 - 跨平台兼容
+        
+        Args:
+            path: 输入路径
+            
+        Returns:
+            标准化后的绝对路径
+        """
+        # 展开用户目录 (~)
+        path = os.path.expanduser(path)
+        # 转换为绝对路径
+        path = os.path.abspath(path)
+        # 标准化路径分隔符
+        path = os.path.normpath(path)
+        return path
+    
+    @staticmethod
+    def is_valid_directory(path: str) -> bool:
+        """
+        检查路径是否为有效目录
+        
+        Args:
+            path: 要检查的路径
+            
+        Returns:
+            是否为有效目录
+        """
+        try:
+            normalized_path = PlatformUtils.normalize_path(path)
+            return os.path.isdir(normalized_path)
+        except Exception:
+            return False
 
 
 class InputValidator:
@@ -272,3 +308,40 @@ class InputValidator:
             return default
         
         return user_input in ['y', 'yes']
+    
+    @staticmethod
+    def get_directory(prompt: str, default: str = "") -> str:
+        """
+        获取用户输入的目录路径
+        
+        Args:
+            prompt: 提示信息
+            default: 默认目录（如果用户直接回车）
+            
+        Returns:
+            标准化后的目录路径
+        """
+        while True:
+            # 显示提示
+            if default:
+                user_input = input(f"{prompt} (回车使用当前目录: {default}): ").strip()
+            else:
+                user_input = input(f"{prompt}: ").strip()
+            
+            # 如果为空，使用默认值
+            if not user_input:
+                if default:
+                    return PlatformUtils.normalize_path(default)
+                else:
+                    OutputFormatter.error("目录路径不能为空")
+                    continue
+            
+            # 标准化路径
+            normalized_path = PlatformUtils.normalize_path(user_input)
+            
+            # 检查目录是否存在
+            if PlatformUtils.is_valid_directory(normalized_path):
+                return normalized_path
+            else:
+                OutputFormatter.error(f"目录不存在: {normalized_path}")
+                OutputFormatter.info("请输入有效的目录路径")

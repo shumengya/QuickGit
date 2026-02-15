@@ -11,13 +11,36 @@ from .config import Config
 class GitOperations:
     """Git操作类"""
     
-    def __init__(self):
+    def __init__(self, work_dir: str = ""):
+        """
+        初始化Git操作类
+        
+        Args:
+            work_dir: 工作目录（默认为当前目录）
+        """
         self.executor = CommandExecutor()
-        self.current_dir = os.getcwd()
+        if work_dir:
+            self.current_dir = work_dir
+        else:
+            self.current_dir = os.getcwd()
+    
+    def change_directory(self, new_dir: str):
+        """
+        切换工作目录
+        
+        Args:
+            new_dir: 新的工作目录
+        """
+        if os.path.isdir(new_dir):
+            self.current_dir = os.path.abspath(new_dir)
+            os.chdir(self.current_dir)
+        else:
+            raise ValueError(f"目录不存在: {new_dir}")
     
     def is_git_repo(self) -> bool:
         """检查当前目录是否是Git仓库"""
-        return os.path.isdir('.git')
+        git_dir = os.path.join(self.current_dir, '.git')
+        return os.path.isdir(git_dir)
     
     def init_repo(self) -> bool:
         """
