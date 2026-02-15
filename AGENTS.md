@@ -223,6 +223,7 @@ OutputFormatter.success("Done!")         # [√] Green success
 OutputFormatter.error("Failed!")         # [×] Red error
 OutputFormatter.info("Note...")          # [i] Cyan info
 OutputFormatter.warning("Warning!")      # [!] Yellow warning
+OutputFormatter.tip("Tip...")            # [*] Cyan tip/suggestion
 OutputFormatter.step(1, "Step one")      # [1] Step indicator
 OutputFormatter.menu_item(1, "Option")   # [1] Menu item
 ```

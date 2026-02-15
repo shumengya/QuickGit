@@ -131,6 +131,11 @@ class OutputFormatter:
         print(f"{Colors.BRIGHT_YELLOW}[!]{Colors.ENDC} {Colors.YELLOW}{text}{Colors.ENDC}")
     
     @staticmethod
+    def tip(text: str):
+        """打印提示信息"""
+        print(f"{Colors.BRIGHT_CYAN}[*]{Colors.ENDC} {Colors.CYAN}{text}{Colors.ENDC}")
+    
+    @staticmethod
     def step(num: int, text: str):
         """打印步骤信息"""
         print(f"{Colors.BRIGHT_BLUE}[{num}]{Colors.ENDC} {Colors.WHITE}{text}{Colors.ENDC}")

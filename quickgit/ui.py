@@ -60,6 +60,10 @@ class GitManagerUI:
             OutputFormatter.error("当前目录不是Git仓库，请先初始化")
             return
         
+        # 提示：先拉取再提交
+        OutputFormatter.tip("建议先拉取最新代码再提交，减少代码冲突")
+        print(f"{Colors.CYAN}{'-' * 60}{Colors.ENDC}")
+        
         # 检查是否有更改
         OutputFormatter.status('running', "检查文件更改中...")
         
