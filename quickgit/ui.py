@@ -90,11 +90,12 @@ class GitManagerUI:
         print(f"{Colors.CYAN}{'-' * 60}{Colors.ENDC}")
         
         OutputFormatter.menu_item(1, "初始化Git仓库")
-        OutputFormatter.menu_item(2, "提交并推送更改")
-        OutputFormatter.menu_item(3, "从远程仓库拉取")
-        OutputFormatter.menu_item(4, "查看仓库状态")
-        OutputFormatter.menu_item(5, "管理远程仓库")
-        OutputFormatter.menu_item(6, "退出程序")
+        OutputFormatter.menu_item(2, "提交更改到本地")
+        OutputFormatter.menu_item(3, "推送到远程仓库")
+        OutputFormatter.menu_item(4, "从远程仓库拉取")
+        OutputFormatter.menu_item(5, "查看仓库状态")
+        OutputFormatter.menu_item(6, "管理远程仓库")
+        OutputFormatter.menu_item(7, "退出程序")
         print(f"{Colors.CYAN}{'-' * 60}{Colors.ENDC}")
         
         # 显示永久提示
@@ -110,9 +111,9 @@ class GitManagerUI:
             # 配置远程仓库
             self.remote_mgr.configure_remotes_interactive()
     
-    def handle_commit_and_push(self):
-        """处理提交并推送"""
-        OutputFormatter.header("提交并推送更改")
+    def handle_commit(self):
+        """处理提交到本地"""
+        OutputFormatter.header("提交更改到本地")
         
         if not self.git_ops.is_git_repo():
             OutputFormatter.error("当前目录不是Git仓库，请先初始化")
@@ -144,8 +145,25 @@ class GitManagerUI:
         if not self.git_ops.commit(commit_msg or ""):
             return
         
+        OutputFormatter.tip("提交成功！如需推送到远程仓库，请选择菜单选项3")
+    
+    def handle_push(self):
+        """处理推送到远程"""
+        OutputFormatter.header("推送到远程仓库")
+        
+        if not self.git_ops.is_git_repo():
+            OutputFormatter.error("当前目录不是Git仓库，请先初始化")
+            return
+        
+        # 检查是否有提交可推送
+        OutputFormatter.status('running', "检查待推送的提交...")
+        
         # 推送到远程仓库
         selected_remotes = self.remote_mgr.select_remote_for_push()
+        
+        if not selected_remotes:
+            OutputFormatter.warning("未选择远程仓库")
+            return
         
         for remote in selected_remotes:
             self.git_ops.push(remote)
@@ -223,21 +241,23 @@ class GitManagerUI:
             self.show_main_menu()
             
             choice = InputValidator.get_choice(
-                f"{Colors.BRIGHT_MAGENTA}>> 请输入选项 [1-6]: {Colors.ENDC}",
-                range(1, 7)
+                f"{Colors.BRIGHT_MAGENTA}>> 请输入选项 [1-7]: {Colors.ENDC}",
+                range(1, 8)
             )
             
             if choice == 1:
                 self.handle_init_repo()
             elif choice == 2:
-                self.handle_commit_and_push()
+                self.handle_commit()
             elif choice == 3:
-                self.handle_pull()
+                self.handle_push()
             elif choice == 4:
-                self.handle_show_status()
+                self.handle_pull()
             elif choice == 5:
-                self.handle_manage_remotes()
+                self.handle_show_status()
             elif choice == 6:
+                self.handle_manage_remotes()
+            elif choice == 7:
                 print(f"\n{Colors.BRIGHT_GREEN}{'=' * 60}")
                 print(f"{Colors.BRIGHT_GREEN}{Colors.BOLD}   感谢使用QuickGit！祝您工作愉快！{Colors.ENDC}")
                 print(f"{Colors.BRIGHT_GREEN}{'=' * 60}{Colors.ENDC}\n")
