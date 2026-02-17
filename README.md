@@ -1,81 +1,64 @@
 # QuickGit - 萌芽一键Git管理工具
 
-一个简单易用的模块化Git命令行管理工具，让Git操作更加便捷高效。
+一个纯 Python 3.6+、零外部依赖的彩色 CLI 工具，用模块化方式把常用 Git 操作“一键化”，支持 Windows / Linux / macOS。
 
-## 功能特性
+## 1) 项目简介与核心卖点
+- 模块化架构，功能职责清晰，易扩展。
+- 无三方依赖，直接随 Python 运行。
+- 跨平台路径与编码适配，默认分支 `main`。
+- 彩色输出 + ASCII 分隔线，兼顾可读性与兼容性。
 
-- **灵活的目录管理** - 启动时可选择任意Git仓库目录进行管理
-- **一键初始化Git仓库** - 自动完成Git初始化、分支创建、.gitignore配置
-- **一键提交推送** - 快速提交代码并推送到远程仓库
-- **多仓库支持** - 同时支持GitHub和Gitea仓库管理
-- **远程仓库管理** - 便捷地添加、删除、查看远程仓库
-- **状态查看** - 快速查看仓库状态和提交历史
-- **彩色界面** - 友好的彩色控制台输出
-- **模块化设计** - 易于维护和扩展
-- **跨平台支持** - 完美兼容 Windows、Linux、macOS
-- **智能路径处理** - 自动处理不同平台的路径格式
+## 2) 功能清单
+- [x] 灵活目录选择（启动时可管理任意仓库）
+- [x] 初始化仓库（创建分支、生成 `.gitignore`）
+- [x] 提交并推送（含多远程选择，默认信息时间戳）
+- [x] 从远程拉取
+- [x] 远程仓库管理（GitHub / Gitea，SSH 优先）
+- [x] 状态查看（工作区状态 + 最近提交）
+- [ ] 分支管理
+- [ ] 标签管理
+- [ ] 冲突解决辅助
+- [ ] 自定义配置文件
+- [ ] 批量处理多个仓库
 
-## 项目结构
-
+## 3) 项目结构
 ```
 QuickGit/
 ├── quickgit/              # 核心模块
-│   ├── __init__.py       # 包初始化
-│   ├── config.py         # 配置模块
-│   ├── utils.py          # 工具类（命令执行、输出格式化、输入验证、平台工具）
-│   ├── git_operations.py # Git操作模块
-│   ├── remote_manager.py # 远程仓库管理模块
-│   └── ui.py            # UI交互模块
-├── quickgit.py          # 主程序入口
-├── run.bat              # Windows启动脚本
-├── run.sh               # Linux/macOS启动脚本
-├── mengya_git_manager.py # 旧版单文件脚本（兼容保留）
-└── README.md            # 项目文档
+│   ├── __init__.py
+│   ├── config.py          # 常量与 .gitignore 模板
+│   ├── utils.py           # 颜色、输出、命令执行、输入校验、平台工具
+│   ├── git_operations.py  # init / add / commit / push / pull / status
+│   ├── remote_manager.py  # 远程管理（GitHub/Gitea）
+│   └── ui.py              # 交互与菜单
+├── quickgit.py            # 主入口（模块化版本）
+├── run.bat                # Windows 启动脚本（UTF-8）
+├── run.sh                 # Linux/macOS 启动脚本（需 chmod +x）
+├── mengya_git_manager.py  # 旧版单文件脚本（兼容保留）
+└── README.md
 ```
 
-## 快速开始
+## 4) 快速开始
+前置要求：已安装 Git，Python 3.6+；已配置 SSH 密钥（推荐用 SSH 访问远程仓库）。
 
-### 运行脚本
-
-**Windows:**
+**Windows**
 ```bash
-# 使用启动脚本（自动设置UTF-8编码）
 run.bat
-
-# 或直接运行
+# 或
 python quickgit.py
 ```
 
-**Linux/macOS:**
+**Linux / macOS**
 ```bash
-# 首次使用需要添加执行权限
 chmod +x run.sh
-
-# 使用启动脚本（推荐）
 ./run.sh
-
-# 或直接运行
+# 或
 python3 quickgit.py
 ```
 
-**通用方式:**
-```bash
-# 新版模块化脚本（推荐）
-python quickgit.py
-
-# 或使用旧版单文件脚本
-python mengya_git_manager.py
-```
-
-### 主要功能菜单
-
-**首次启动时：**
-- 选择要管理的Git仓库目录
-- 支持绝对路径和相对路径
-- 直接回车使用脚本所在目录
-- 自动验证目录是否存在
-
-**主菜单选项：**
+## 5) 交互流程
+- 启动即要求选择工作目录：支持绝对/相对路径，直接回车使用脚本所在目录，自动校验目录存在。
+- 主菜单（含永久提示）：
 ```
 [1] 初始化Git仓库
 [2] 提交并推送更改
@@ -83,173 +66,51 @@ python mengya_git_manager.py
 [4] 查看仓库状态
 [5] 管理远程仓库
 [6] 退出程序
-
-小提示：
 [*] 提交代码前建议先拉取最新代码，减少代码冲突
 [*] 使用SSH进行Git提交更方便快捷和安全
 ```
 
-## 使用场景
+## 6) 常用操作示例
+- 初始化仓库：选择目录 → 选 1 → 自动创建 `.gitignore`（含前端/后端通用规则）并尝试首提。
+- 提交并推送：选 2 → 查看更改 → 输入提交信息（留空自动填入时间戳）→ 选择远程（可多选）。
+- 拉取更新：选 3 → 选择远程 → 拉取当前分支。
+- 远程管理：选 5 → 支持添加/删除远程；URL 模板  
+  - GitHub: `git@github.com:shumengya/{repo}.git`  
+  - Gitea : `ssh://git@git.shumengya.top:8022/{user}/{repo}.git`
 
-### 场景0：选择工作目录
+## 7) 跨平台与终端要求
+- `run.bat` 自动设置 UTF-8；Windows 使用 `python` 命令。
+- `run.sh` 设置 `LANG/LC_ALL`，首次需 `chmod +x run.sh`；Linux/macOS 使用 `python3`。
+- 终端需支持 ANSI 颜色；仅使用 ASCII 符号，避免编码错位。
 
-启动脚本后，首先会要求选择工作目录：
+## 8) 控制台输出规范
+- 分隔线宽度固定 60：`======` / `------` / `·····`。
+- 禁止使用 emoji 和 Unicode 盒线字符。
+- 颜色键值：成功绿、错误红、信息青、警告黄、标题青/品红。
+- 状态/提示图标：`[√] [×] [i] [!] [>] [*]`。
 
-**Windows示例：**
-```
-请输入要管理的Git仓库目录 (回车使用当前目录: E:\Projects\MyApp): 
-输入: C:\Users\YourName\project
-或: .\myproject  (相对路径)
-或: 直接回车使用默认目录
-```
+## 9) 手动测试清单
+- 启动脚本：`run.bat`、`run.sh`、直接运行 `python/ python3 quickgit.py`。
+- 颜色与中文显示正常，分隔线对齐 60 列。
+- 初始化仓库、提交+推送、拉取、远程管理均可用。
+- 默认分支 `main`；`.gitignore` 自动写入成功。
 
-**Linux/macOS示例：**
-```
-请输入要管理的Git仓库目录 (回车使用当前目录: /home/user/quickgit): 
-输入: /home/yourname/project
-或: ./myproject  (相对路径)
-或: ~/project   (使用~表示用户目录)
-或: 直接回车使用默认目录
-```
+## 10) 常见问题 / 故障排查
+- 推送失败：确认 SSH 密钥已添加且远程地址正确。
+- 终端乱码：设置 UTF-8（Windows 可 `chcp 65001`；Linux/macOS 确保 `LANG/LC_ALL` 为 UTF-8）。
+- 颜色不显示：使用支持 ANSI 的终端（Windows Terminal/PowerShell 等）。
+- 找不到 `python3`：在 Linux/macOS 安装或创建软链接；Windows 使用 `python`。
 
-### 场景1：初始化新项目
-
-1. 运行脚本，输入项目目录路径（或直接回车使用当前目录）
-2. 选择 `1. 初始化Git仓库`
-3. 按提示配置GitHub或Gitea远程仓库
-4. 完成首次提交
-
-### 场景2：提交代码更改
-
-1. 运行脚本，选择要管理的Git仓库目录
-2. 选择 `2. 提交并推送更改`
-3. 输入提交信息（或使用默认信息）
-4. 选择推送到哪个远程仓库
-
-### 场景3：拉取远程更新
-
-1. 运行脚本，选择要管理的Git仓库目录
-2. 选择 `3. 从远程仓库拉取`
-3. 选择要拉取的远程仓库
-
-### 场景4：管理多个项目
-
-1. 每次运行脚本都可以选择不同的项目目录
-2. 无需在项目目录中运行脚本
-3. 一个工具管理所有Git项目
-
-## 远程仓库配置
-
-### GitHub配置
-
-- 使用SSH方式连接
-- 格式：`git@github.com:shumengya/{仓库名}.git`
-
-### Gitea配置
-
-- 服务器地址：`repo.shumengya.top:8022`
-- 使用SSH方式连接
-- 格式：`ssh://git@repo.shumengya.top:8022/{用户名}/{仓库名}.git`
-
-## .gitignore 支持
-
-脚本自动创建的 `.gitignore` 文件支持以下项目类型：
-
-- **Node.js/React** - node_modules/, build/, dist/
-- **Go** - *.exe, *.test, vendor/
-- **Python** - __pycache__/, venv/, *.pyc
-- **通用** - 日志文件、临时文件、IDE配置
-
-## 系统要求
-
-- **Python:** 3.6+ (Linux/macOS 使用 python3)
-- **Git:** 已安装并配置
-- **SSH密钥:** 已配置（用于远程仓库推送）
-- **操作系统:** Windows、Linux、macOS 均支持
-
-### 平台特定说明
-
-**Windows:**
-- 建议使用 `run.bat` 启动，自动配置UTF-8编码
-- 控制台需支持ANSI颜色代码（Windows 10+自带支持）
-
-**Linux/macOS:**
-- 使用 `python3` 命令运行
-- 确保终端支持UTF-8编码和颜色显示
-- 首次使用 `run.sh` 需要添加执行权限：`chmod +x run.sh`
-
-## 注意事项
-
-1. 首次使用前请确保已配置Git用户信息：
-   ```bash
-   git config --global user.name "你的名字"
-   git config --global user.email "你的邮箱"
-   ```
-
-2. 使用SSH方式连接需要提前配置SSH密钥
-
-3. 推送到Gitea时请确保仓库已在服务器上创建
-
-4. **重要提示:** 提交代码前建议先拉取最新代码，减少代码冲突
-   - 先执行 `3. 从远程仓库拉取`
-   - 再执行 `2. 提交并推送更改`
-
-## 常见问题
-
-**Q: 推送失败怎么办？**  
-A: 请检查SSH密钥配置和远程仓库地址是否正确
-
-**Q: 如何切换远程仓库？**  
-A: 使用 `5. 管理远程仓库` 功能添加或删除远程仓库
-
-**Q: 支持哪些Git操作？**  
-A: 目前支持init、add、commit、push、pull等常用操作
-
-## 模块说明
-
-### config.py - 配置模块
-存储所有配置信息，包括Gitea服务器地址、GitHub用户名、.gitignore模板等。
-
-### utils.py - 工具类模块
-- `Colors`: 控制台颜色定义
-- `CommandExecutor`: 命令执行器
-- `OutputFormatter`: 输出格式化器
-- `InputValidator`: 输入验证器
-- `PlatformUtils`: 跨平台工具（清屏、平台检测）
-
-### git_operations.py - Git操作模块
-提供Git基本操作功能：
-- 初始化仓库
-- 检查状态
-- 添加/提交更改
-- 推送/拉取代码
-
-### remote_manager.py - 远程仓库管理模块
-管理GitHub和Gitea远程仓库：
-- 添加/删除远程仓库
-- 查看远程仓库列表
-- 选择推送/拉取目标
-
-### ui.py - UI交互模块
-处理用户界面和交互逻辑，整合所有功能模块。
-
-## 开发计划
-
+## 11) 路线图
 - [x] 模块化架构重构
-- [ ] 支持分支管理
-- [ ] 支持标签管理
-- [ ] 支持冲突解决辅助
-- [ ] 支持自定义配置文件
-- [ ] 支持批量操作多个仓库
+- [ ] 分支管理
+- [ ] 标签管理
+- [ ] 冲突解决辅助
+- [ ] 自定义配置文件
+- [ ] 批量操作多个仓库
 
-## 许可证
+## 12) 许可证与作者
+- 许可证：MIT
+- 作者：shumengya
 
-MIT License
-
-## 作者
-
-shumengya
-
----
-
-**让Git操作更简单，让开发更高效！**
+让 Git 操作更简单，让开发更高效！

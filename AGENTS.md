@@ -241,7 +241,7 @@ OutputFormatter.menu_item(1, "Option")   # [1] Menu item
 ### SSH Configuration
 
 - **GitHub:** `git@github.com:shumengya/{repo}.git`
-- **Gitea:** `ssh://git@repo.shumengya.top:8022/{user}/{repo}.git`
+- **Gitea:** `ssh://git@git.shumengya.top:8022/{user}/{repo}.git`
 
 All remote operations use SSH (no HTTPS).
 

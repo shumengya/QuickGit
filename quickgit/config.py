@@ -7,7 +7,7 @@ class Config:
     """配置类"""
     
     # Gitea服务器配置
-    GITEA_HOST = "repo.shumengya.top"
+    GITEA_HOST = "git.shumengya.top"
     GITEA_PORT = "8022"
     
     # GitHub配置
