@@ -1,5 +1,9 @@
 # GitHub SSH 连接问题诊断与解决方案
 
+**⚠️ QuickGit 工具说明：** 本工具目前仅支持 SSH 方式连接远程仓库，不支持 HTTPS。本文档中提到的 HTTPS 方案仅适用于手动使用 `git` 命令行操作，不适用于 QuickGit 工具本身。
+
+---
+
 ## 问题现象
 
 ```
@@ -286,8 +290,8 @@ git remote -v
 ### 步骤 6: 使用 QuickGit 推送
 
 1. 启动 QuickGit
-2. 选择 `[2] 提交并推送更改`
-3. 选择推送到 `github`
+2. 选择 `[2] 提交更改到本地` - 提交到本地仓库
+3. 选择 `[3] 推送到远程仓库` - 推送到 `github`（通过 SSH）
 
 ---
 
@@ -311,9 +315,11 @@ git push -v github main
 
 ---
 
-## 快速修复：改用 HTTPS
+## 快速修复：改用 HTTPS（仅适用于 git 命令行）
 
-如果 SSH 问题难以解决，可以临时使用 HTTPS：
+**⚠️ 重要：** 以下 HTTPS 方案仅适用于手动使用 `git` 命令行操作，**QuickGit 工具本身不支持 HTTPS**。
+
+如果 SSH 问题难以解决，可以临时使用命令行的 HTTPS 方式：
 
 ```bash
 # 修改远程仓库 URL
@@ -333,18 +339,19 @@ git push github main
 3. 勾选 `repo` 权限
 4. 复制 Token（只显示一次）
 
+**再次强调：** QuickGit 工具不支持 HTTPS 远程仓库，必须使用 SSH。如果需要使用 HTTPS，请直接使用 `git` 命令行工具。
+
 ---
 
 ## 总结
 
-**推荐解决方案顺序:**
+**推荐解决方案顺序（用于 QuickGit）:**
 
 1. ✅ 生成 SSH 密钥
 2. ✅ 添加公钥到 GitHub
 3. ✅ 测试 SSH 连接
 4. ✅ 配置 SSH Agent（如果需要）
 5. ⚠️ 检查代理设置（如果在公司网络）
-6. 🔄 最后选择：使用 HTTPS 作为备用方案
+6. ⚠️ 使用 SSH over HTTPS（端口 443）作为备选
 
-**最快的解决方法:**
-如果急需推送代码，先改用 HTTPS，之后再慢慢配置 SSH。
+**注意：** QuickGit 工具不支持 HTTPS 方式，必须解决 SSH 连接问题才能正常使用。如果实在无法配置 SSH，建议直接使用 `git` 命令行工具配合 HTTPS。

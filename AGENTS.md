@@ -13,6 +13,7 @@ This document provides coding agents with essential information about the QuickG
 - Standard library only: `subprocess`, `os`, `datetime`, `sys`
 - Cross-platform support: Windows, Linux, macOS
 - ANSI escape codes for colorful console output
+- **SSH-only Git operations**: Supports GitHub and Gitea via SSH (no HTTPS support)
 
 ---
 
@@ -37,21 +38,32 @@ python mengya_git_manager.py
 
 **No formal test suite exists yet.** Manual testing workflow:
 
-1. **Test in a clean directory:**
+1. **Prerequisite: Configure SSH keys**
+   ```bash
+   # Generate SSH key if needed
+   ssh-keygen -t ed25519 -C "your_email@example.com"
+   
+   # Test SSH connection
+   ssh -T git@github.com
+   ssh -T git@git.shumengya.top -p 8022
+   ```
+
+2. **Test in a clean directory:**
    ```bash
    cd /path/to/test/directory
    python E:\SmyProjects\Python\脚本\萌芽一键Git管理\quickgit.py
    ```
 
-2. **Test each menu option:**
+3. **Test each menu option:**
    - Option 1: Initialize Git repo
-   - Option 2: Commit and push (requires changes)
-   - Option 3: Pull from remote
-   - Option 4: View status
-   - Option 5: Manage remotes
-   - Option 6: Exit
+   - Option 2: Commit changes to local (requires changes)
+   - Option 3: Push to remote (requires SSH-configured remote)
+   - Option 4: Pull from remote (requires SSH-configured remote)
+   - Option 5: View status
+   - Option 6: Manage remotes (add GitHub/Gitea via SSH)
+   - Option 7: Exit
 
-3. **Verify console output:**
+4. **Verify console output:**
    - Check colors render correctly
    - Ensure ASCII dividers align (60 chars wide)
    - No encoding errors with Chinese characters
@@ -240,10 +252,17 @@ OutputFormatter.menu_item(1, "Option")   # [1] Menu item
 
 ### SSH Configuration
 
+**⚠️ IMPORTANT: This tool ONLY supports SSH connections. HTTPS is not supported.**
+
 - **GitHub:** `git@github.com:shumengya/{repo}.git`
 - **Gitea:** `ssh://git@git.shumengya.top:8022/{user}/{repo}.git`
 
-All remote operations use SSH (no HTTPS).
+All remote operations (push, pull, fetch) use SSH. Do not use HTTPS URLs like `https://github.com/user/repo.git`.
+
+**Prerequisites:**
+1. User must have SSH keys generated (`ssh-keygen`)
+2. Public key must be added to GitHub/Gitea account
+3. SSH connection must be tested and working
 
 ### Command Execution
 

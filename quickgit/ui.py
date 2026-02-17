@@ -208,13 +208,15 @@ class GitManagerUI:
             OutputFormatter.menu_item(1, "查看远程仓库")
             OutputFormatter.menu_item(2, "添加GitHub远程仓库")
             OutputFormatter.menu_item(3, "添加Gitea远程仓库")
-            OutputFormatter.menu_item(4, "删除远程仓库")
-            OutputFormatter.menu_item(5, "返回主菜单")
+            OutputFormatter.menu_item(4, "添加自建Git仓库")
+            OutputFormatter.menu_item(5, "配置Gitea服务器")
+            OutputFormatter.menu_item(6, "删除远程仓库")
+            OutputFormatter.menu_item(7, "返回主菜单")
             print(f"{Colors.CYAN}{'-' * 60}{Colors.ENDC}")
             
             choice = InputValidator.get_choice(
-                f"{Colors.BRIGHT_CYAN}>> 请选择 [1-5]: {Colors.ENDC}",
-                range(1, 6)
+                f"{Colors.BRIGHT_CYAN}>> 请选择 [1-7]: {Colors.ENDC}",
+                range(1, 8)
             )
             
             if choice == 1:
@@ -224,8 +226,12 @@ class GitManagerUI:
             elif choice == 3:
                 self.remote_mgr.add_gitea_remote()
             elif choice == 4:
-                self.remote_mgr.remove_remote()
+                self.remote_mgr.add_custom_remote()
             elif choice == 5:
+                self.remote_mgr.configure_gitea_settings()
+            elif choice == 6:
+                self.remote_mgr.remove_remote()
+            elif choice == 7:
                 break
     
     def run(self):
